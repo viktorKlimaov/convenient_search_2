@@ -35,11 +35,8 @@ class JSONSaver(AbstractJson):
             except json.JSONDecodeError:
                 data = []
 
-                # сортировка по зарплате
-                sort_vacancies = sorted(vacancies, key=lambda x: x.salary_from, reverse=True)
-
                 # добавление вакансии в список
-                for vacancy in sort_vacancies:
+                for vacancy in vacancies:
                     data.append(vacancy.cast_to_object_list())
 
         # добавление список вакансий в JSON-файл
@@ -51,9 +48,12 @@ class JSONSaver(AbstractJson):
         with open(self.path, 'r', encoding='utf-8') as file:
             vacancy_list = json.load(file)
 
+        # сортировка по зарплате
+        sort_vacancies = sorted(vacancy_list, key=lambda x: x['salary_from'], reverse=True)
+
         # Фильтрация по критериям пользователя
         top_vacancies = []
-        for vacancy in vacancy_list:
+        for vacancy in sort_vacancies:
 
             list_salary_range = salary_range
             if filter_words not in vacancy['name'] and filter_words is not None:
@@ -82,5 +82,3 @@ class JSONSaver(AbstractJson):
         with open(self.path, 'r', encoding='utf-8') as file:
             vacancy_list = json.load(file)
         return vacancy_list.rmote(vacancy)
-
-
